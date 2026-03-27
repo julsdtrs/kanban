@@ -83,7 +83,21 @@ class IssueController extends Controller
 
     public function show(Issue $issue)
     {
-        $issue->load(['project', 'issueType', 'priority', 'status', 'reporter', 'assignee', 'parent', 'labels', 'comments.user', 'attachments']);
+        $issue->load([
+            'project',
+            'issueType',
+            'priority',
+            'status',
+            'reporter',
+            'assignee',
+            'parent',
+            'labels',
+            'comments.user',
+            'attachments.uploader',
+            'subtasks',
+            'sprints',
+            'watchers',
+        ]);
         if (request()->filled('modal')) {
             return view('issues._show_modal', compact('issue'));
         }

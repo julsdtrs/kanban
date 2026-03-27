@@ -12,7 +12,7 @@
     <div class="card-header bg-transparent border-bottom py-3">
         <span class="fw-600 text-body">Create issue details</span>
     </div>
-    <div class="card-body p-4">
+    <div class="card-body p-4 issue-create-scroll">
         <form action="{{ route('issues.store') }}" method="POST">
             @csrf
 
@@ -147,32 +147,61 @@
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
+<style>
+    .issue-create-scroll {
+        max-height: calc(100vh - 180px);
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+</style>
 @endpush
 
 @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js"></script>
 <script>
-document.addEventListener('DOMContentLoaded', function () {
-    var editor = $('#issue-description-editor');
-    if (!editor.length || typeof editor.summernote !== 'function') {
-        return;
-    }
-    if (editor.next('.note-editor').length) {
-        return;
-    }
+    (function initIssueDescriptionEditor() {
+        function loadScriptOnce(id, src, cb) {
+            var existing = document.getElementById(id);
+            if (existing) {
+                if (typeof cb === 'function') cb();
+                return;
+            }
+            var s = document.createElement('script');
+            s.id = id;
+            s.src = src;
+            s.onload = function() { if (typeof cb === 'function') cb(); };
+            document.body.appendChild(s);
+        }
 
-    editor.summernote({
-        placeholder: 'Add context, expected behavior, and acceptance notes',
-        tabsize: 2,
-        height: 220,
-        toolbar: [
-            ['style', ['bold', 'italic', 'underline', 'clear']],
-            ['font', ['strikethrough']],
-            ['para', ['ul', 'ol', 'paragraph']],
-            ['insert', ['link']],
-            ['view', ['codeview']]
-        ]
-    });
-});
+        function mountEditor() {
+            if (typeof $ === 'undefined') return;
+            var editor = $('#issue-description-editor');
+            if (!editor.length || typeof editor.summernote !== 'function') return;
+            if (editor.next('.note-editor').length) return;
+
+            editor.summernote({
+                placeholder: 'Add context, expected behavior, and acceptance notes',
+                tabsize: 2,
+                height: 220,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['font', ['strikethrough']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['insert', ['link']],
+                    ['view', ['codeview']]
+                ]
+            });
+        }
+
+        if (typeof $ !== 'undefined' && typeof $.fn !== 'undefined' && typeof $.fn.summernote === 'function') {
+            mountEditor();
+            return;
+        }
+
+        loadScriptOnce(
+            'summernote-lite-js',
+            'https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.js',
+            mountEditor
+        );
+    })();
 </script>
 @endpush

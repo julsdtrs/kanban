@@ -26,23 +26,50 @@ const GAP_X = 52;
 const GAP_Y = 60;
 
 function buildElements(statusesData, transitionsData) {
+  const normalizeId = (v) => (v == null ? null : String(v));
   const statusById = new Map();
-  (statusesData || []).forEach((s) => statusById.set(s.id, s));
+  (statusesData || []).forEach((s) => {
+    const id = normalizeId(s && s.id);
+    if (id !== null) statusById.set(id, s);
+  });
   // Sequence = order of first appearance in the transition list (Defined transitions = workflow setup order)
   const sequence = [];
   const seen = new Set();
   (transitionsData || []).forEach((t) => {
-    [t.from_status_id, t.to_status_id].forEach((id) => {
+    [t.from_status_id, t.to_status_id].forEach((rawId) => {
+      const id = normalizeId(rawId);
       if (id != null && !seen.has(id)) {
         seen.add(id);
         sequence.push(id);
       }
     });
   });
-  const orderedStatuses = sequence.map((id) => statusById.get(id)).filter(Boolean);
+  // Fallback: if status list keys don't match transition keys, build lightweight statuses from transitions.
+  const orderedStatuses = sequence
+    .map((id) => statusById.get(id))
+    .filter(Boolean);
+  if (orderedStatuses.length === 0 && transitionsData.length > 0) {
+    const fallback = [];
+    const fallbackSeen = new Set();
+    transitionsData.forEach((t) => {
+      const fromId = normalizeId(t.from_status_id);
+      const toId = normalizeId(t.to_status_id);
+      const fromStatus = t.from_status || t.fromStatus || {};
+      const toStatus = t.to_status || t.toStatus || {};
+      if (fromId && !fallbackSeen.has(fromId)) {
+        fallbackSeen.add(fromId);
+        fallback.push({ id: fromId, name: fromStatus.name || `Status ${fromId}`, color: fromStatus.color || '#6c757d' });
+      }
+      if (toId && !fallbackSeen.has(toId)) {
+        fallbackSeen.add(toId);
+        fallback.push({ id: toId, name: toStatus.name || `Status ${toId}`, color: toStatus.color || '#6c757d' });
+      }
+    });
+    orderedStatuses.push(...fallback);
+  }
   const nodes = orderedStatuses.map((s, i) => ({
     data: {
-      id: `status-${s.id}`,
+      id: `status-${normalizeId(s.id)}`,
       label: (s.name || '').replace(/</g, '&lt;').replace(/&/g, '&amp;'),
       color: s.color || '#6c757d',
     },
@@ -51,8 +78,8 @@ function buildElements(statusesData, transitionsData) {
   const edges = (transitionsData || []).map((t, i) => ({
     data: {
       id: `edge-${t.id}`,
-      source: `status-${t.from_status_id}`,
-      target: `status-${t.to_status_id}`,
+      source: `status-${normalizeId(t.from_status_id)}`,
+      target: `status-${normalizeId(t.to_status_id)}`,
       transitionId: t.id,
       label: (t.transition_name || '').trim().substring(0, 28),
       color: LINK_COLORS[i % LINK_COLORS.length],
