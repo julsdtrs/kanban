@@ -11,6 +11,7 @@ class UserRoleController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
         $query = DB::table('user_roles')
             ->join('users', 'user_roles.user_id', '=', 'users.id')
             ->join('roles', 'user_roles.role_id', '=', 'roles.id')
@@ -18,7 +19,15 @@ class UserRoleController extends Controller
         if ($request->filled('user_id')) {
             $query->where('user_roles.user_id', $request->user_id);
         }
-        $items = $query->paginate(15);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('users.display_name', 'like', "%{$term}%")
+                    ->orWhere('users.username', 'like', "%{$term}%")
+                    ->orWhere('roles.name', 'like', "%{$term}%");
+            });
+        }
+        $items = $query->paginate($perPage);
         $users = User::where('is_active', true)->orderBy('username')->get();
         if ($request->filled('partial')) {
             return view('user-roles._table', compact('items', 'users'));

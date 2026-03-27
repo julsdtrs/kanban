@@ -3,6 +3,7 @@ $createLoadUrl = route('project-members.create');
 $createSubmitUrl = route('project-members.store');
 $refreshUrl = request()->has('project_id') ? route('project-members.index', ['project_id' => request('project_id'), 'partial' => 1]) : route('project-members.index', ['partial' => 1]);
 @endphp
+@include('partials.list-table-controls', ['paginator' => $items, 'searchPlaceholder' => 'Search project members'])
 @if(isset($projects))
 <form method="GET" class="setup-filter-form" action="{{ route('project-members.index') }}">
     @if(request()->has('project_id'))
@@ -42,6 +43,4 @@ $refreshUrl = request()->has('project_id') ? route('project-members.index', ['pr
         </tbody>
     </table>
 </div>
-@if(isset($items) && $items->hasPages())
-<div class="card-footer bg-white border-0 pt-0">{{ $items->appends(request()->query())->links() }}</div>
-@endif
+@include('partials.list-table-footer', ['paginator' => $items])

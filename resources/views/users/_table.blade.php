@@ -1,3 +1,4 @@
+@include('partials.list-table-controls', ['paginator' => $users, 'searchPlaceholder' => 'Search users'])
 <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
         <thead class="table-light">
@@ -28,6 +29,4 @@
         </tbody>
     </table>
 </div>
-@if($users->hasPages())
-<div class="card-footer bg-white border-0 pt-0">{{ $users->appends(request()->query())->links() }}</div>
-@endif
+@include('partials.list-table-footer', ['paginator' => $users])

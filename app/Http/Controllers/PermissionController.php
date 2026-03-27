@@ -9,7 +9,16 @@ class PermissionController extends Controller
 {
     public function index(Request $request)
     {
-        $permissions = Permission::latest('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = Permission::query();
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('code', 'like', "%{$term}%")
+                    ->orWhere('description', 'like', "%{$term}%");
+            });
+        }
+        $permissions = $query->latest('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('permissions._table', compact('permissions'));
         }

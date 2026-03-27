@@ -9,7 +9,13 @@ class IssueLabelController extends Controller
 {
     public function index(Request $request)
     {
-        $issueLabels = IssueLabel::withCount('issues')->latest('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = IssueLabel::withCount('issues');
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where('name', 'like', "%{$term}%");
+        }
+        $issueLabels = $query->latest('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('issue-labels._table', compact('issueLabels'));
         }

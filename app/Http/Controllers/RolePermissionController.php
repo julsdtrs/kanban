@@ -11,6 +11,7 @@ class RolePermissionController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
         $query = DB::table('role_permissions')
             ->join('roles', 'role_permissions.role_id', '=', 'roles.id')
             ->join('permissions', 'role_permissions.permission_id', '=', 'permissions.id')
@@ -18,7 +19,14 @@ class RolePermissionController extends Controller
         if ($request->filled('role_id')) {
             $query->where('role_permissions.role_id', $request->role_id);
         }
-        $items = $query->paginate(15);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('roles.name', 'like', "%{$term}%")
+                    ->orWhere('permissions.code', 'like', "%{$term}%");
+            });
+        }
+        $items = $query->paginate($perPage);
         $roles = Role::orderBy('name')->get();
         if ($request->filled('partial')) {
             return view('role-permissions._table', compact('items', 'roles'));

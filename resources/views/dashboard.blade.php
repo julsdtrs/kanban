@@ -3,12 +3,16 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<div class="dashboard-page">
+@php
+    $todayLabel = now()->format('D, M d');
+    $overdueDeltaClass = ($stats['overdue_issues'] ?? 0) > 0 ? 'text-danger' : 'text-success';
+@endphp
+<div class="dashboard-page dashboard-sneat">
     <div class="dashboard-page-header">
         <div>
-            <div class="dashboard-page-title">Dashboard overview</div>
+            <div class="dashboard-page-title">Operations Dashboard</div>
             <div class="dashboard-page-subtitle">
-                Your current projects, tickets and board health at a glance.
+                Delivery health, issue flow, and assignment balance for {{ $todayLabel }}.
             </div>
         </div>
         <div class="d-flex flex-wrap gap-2">
@@ -24,7 +28,7 @@
     {{-- Row 1: Work overview (project/issue summary) + monitoring KPIs --}}
     <div class="row g-2 g-lg-3 mb-3">
         <div class="col-lg-7 col-12">
-            <div class="card dashboard-overview h-100">
+            <div class="card dashboard-overview dashboard-panel h-100">
                 <div class="card-body">
                     <div class="overview-title">Work overview</div>
                     <div class="overview-stats">
@@ -49,7 +53,7 @@
         <div class="col-lg-5">
             <div class="row g-2 h-100">
                 <div class="col-6 col-lg-12">
-                    <div class="card dashboard-kpi h-100">
+                    <div class="card dashboard-kpi dashboard-panel h-100">
                         <div class="card-body d-flex align-items-center">
                             <div class="kpi-icon bg-primary bg-opacity-10 text-primary me-2"><i class="bi bi-folder"></i></div>
                             <div class="min-w-0">
@@ -62,7 +66,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-lg-12">
-                    <div class="card dashboard-kpi h-100">
+                    <div class="card dashboard-kpi dashboard-panel h-100">
                         <div class="card-body d-flex align-items-center">
                             <div class="kpi-icon bg-success bg-opacity-10 text-success me-2"><i class="bi bi-ticket-perforated"></i></div>
                             <div class="min-w-0">
@@ -75,7 +79,7 @@
                     </div>
                 </div>
                 <div class="col-6 col-lg-12">
-                    <div class="card dashboard-kpi h-100">
+                    <div class="card dashboard-kpi dashboard-panel h-100">
                         <div class="card-body d-flex align-items-center">
                             <div class="kpi-icon bg-info bg-opacity-10 text-info me-2"><i class="bi bi-person"></i></div>
                             <div class="min-w-0">
@@ -87,13 +91,13 @@
                     </div>
                 </div>
                 <div class="col-6 col-lg-12">
-                    <div class="card dashboard-kpi h-100">
+                    <div class="card dashboard-kpi dashboard-panel h-100">
                         <div class="card-body d-flex align-items-center">
                             <div class="kpi-icon bg-danger bg-opacity-10 text-danger me-2"><i class="bi bi-exclamation-triangle"></i></div>
                             <div class="min-w-0">
                                 <div class="text-muted small text-uppercase tracking">Attention needed</div>
                                 <div class="fs-5 fw-semibold text-body">{{ $stats['overdue_issues'] }}</div>
-                                <div class="kpi-secondary">Overdue · Due today: {{ $stats['issues_due_today'] }}</div>
+                                <div class="kpi-secondary"><span class="{{ $overdueDeltaClass }}">Overdue</span> · Due today: {{ $stats['issues_due_today'] }}</div>
                             </div>
                         </div>
                     </div>
@@ -105,7 +109,7 @@
     {{-- Row 2: Activity & deadlines (monitor project/issue health) --}}
     <div class="row g-2 mb-3">
         <div class="col-12">
-            <div class="card dashboard-card">
+            <div class="card dashboard-card dashboard-panel">
                 <div class="card-header">
                     <span><i class="bi bi-activity me-2"></i>Activity &amp; deadlines</span>
                     <span class="subtitle d-none d-sm-inline">Monitor issues and project workload</span>
@@ -189,7 +193,7 @@
     {{-- Row 3: Tickets by user + Board statistics --}}
     <div class="row g-2 g-lg-3 mb-3">
         <div class="col-lg-7">
-            <div class="card dashboard-card h-100">
+            <div class="card dashboard-card dashboard-panel h-100">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <div>
                         <span>Tickets by user</span>
@@ -208,7 +212,7 @@
             </div>
         </div>
         <div class="col-lg-5">
-            <div class="card dashboard-card h-100">
+            <div class="card dashboard-card dashboard-panel h-100">
                 <div class="card-header d-flex align-items-center justify-content-between flex-wrap gap-2">
                     <div>
                         <span>Board statistics</span>
@@ -243,7 +247,7 @@
     {{-- Row 4: Projects by issues + Status & priority overview --}}
     <div class="row g-2 g-lg-3 mb-3">
         <div class="col-lg-8">
-            <div class="card dashboard-card h-100">
+            <div class="card dashboard-card dashboard-panel h-100">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <div>
                         <span>Projects by issues</span>
@@ -264,7 +268,7 @@
             </div>
         </div>
         <div class="col-lg-4">
-            <div class="card dashboard-card h-100">
+            <div class="card dashboard-card dashboard-panel h-100">
                 <div class="card-header">
                     <span>Status &amp; priority overview</span>
                     <span class="subtitle d-none d-sm-inline">How work is distributed</span>
@@ -314,7 +318,7 @@
     {{-- Row 5: Recent issues --}}
     <div class="row g-2">
         <div class="col-12">
-            <div class="card dashboard-card">
+            <div class="card dashboard-card dashboard-panel">
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <span>Recent Issues</span>
                     <a href="{{ route('issues.index') }}" class="btn btn-sm btn-outline-primary">View all</a>
@@ -354,6 +358,63 @@
     </div>
 </div>
 
+@push('styles')
+<style>
+.dashboard-sneat .dashboard-panel {
+    border: 1px solid rgba(0,0,0,.06);
+    box-shadow: 0 6px 16px -10px rgba(67, 89, 113, .35);
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    animation: dashboardCardIn .35s ease both;
+}
+.dashboard-sneat .dashboard-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 24px -14px rgba(67, 89, 113, .45);
+    border-color: rgba(105,108,255,.28);
+}
+.dashboard-sneat .dashboard-page-header {
+    margin-bottom: .75rem;
+    padding: .1rem 0 .45rem;
+}
+.dashboard-sneat .dashboard-page-title {
+    font-size: 1.35rem;
+    letter-spacing: -.015em;
+}
+.dashboard-sneat .dashboard-page-subtitle {
+    font-size: .825rem;
+}
+.dashboard-sneat .dashboard-kpi .card-body {
+    min-height: 84px;
+}
+.dashboard-sneat .dashboard-card .card-header {
+    padding: .7rem 1rem;
+}
+.dashboard-sneat .dashboard-card .card-body {
+    padding: .9rem 1rem;
+}
+.dashboard-sneat .dashboard-activity-tile {
+    border: 1px solid rgba(0,0,0,.05);
+    min-height: 64px;
+}
+.dashboard-sneat .dashboard-chart-container {
+    height: 260px;
+}
+.dashboard-sneat .dashboard-donut-container {
+    height: 210px;
+}
+.dashboard-sneat .table tbody td {
+    padding-top: .62rem;
+    padding-bottom: .62rem;
+}
+.dashboard-sneat .row > [class*="col-"] .dashboard-panel { animation-delay: .03s; }
+.dashboard-sneat .row > [class*="col-"]:nth-child(2) .dashboard-panel { animation-delay: .07s; }
+.dashboard-sneat .row > [class*="col-"]:nth-child(3) .dashboard-panel { animation-delay: .11s; }
+@keyframes dashboardCardIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+</style>
+@endpush
+
 @push('scripts')
 <script>
 window.initBoardStatsChart = function() {
@@ -389,6 +450,7 @@ window.initBoardStatsChart = function() {
             responsive: true,
             maintainAspectRatio: false,
             cutout: '65%',
+            animation: { duration: 520, easing: 'easeOutCubic' },
             plugins: { legend: { display: false } }
         }
     });
@@ -415,6 +477,7 @@ $(function() {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: { duration: 520, easing: 'easeOutCubic' },
                 plugins: { legend: { display: false } },
                 scales: {
                     y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,.06)' } },
@@ -447,6 +510,7 @@ $(function() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: { duration: 520, easing: 'easeOutCubic' },
                     plugins: { legend: { display: false } },
                     scales: {
                         y: { beginAtZero: true, ticks: { stepSize: 1 }, grid: { color: 'rgba(0,0,0,.06)' } },

@@ -9,7 +9,17 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $users = User::latest('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = User::query();
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('username', 'like', "%{$term}%")
+                    ->orWhere('email', 'like', "%{$term}%")
+                    ->orWhere('display_name', 'like', "%{$term}%");
+            });
+        }
+        $users = $query->latest('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('users._table', compact('users'));
         }

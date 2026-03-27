@@ -1,3 +1,4 @@
+@include('partials.list-table-controls', ['paginator' => $workflows, 'searchPlaceholder' => 'Search workflows'])
 <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
         <thead class="table-light"><tr><th>Name</th><th>Board</th><th width="140"></th></tr></thead>
@@ -18,4 +19,4 @@
         </tbody>
     </table>
 </div>
-@if($workflows->hasPages())<div class="card-footer bg-white border-0 pt-0">{{ $workflows->appends(request()->query())->links() }}</div>@endif
+@include('partials.list-table-footer', ['paginator' => $workflows])

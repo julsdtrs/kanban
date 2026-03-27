@@ -9,7 +9,13 @@ class PriorityController extends Controller
 {
     public function index(Request $request)
     {
-        $priorities = Priority::orderBy('level')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = Priority::query();
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where('name', 'like', "%{$term}%");
+        }
+        $priorities = $query->orderBy('level')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('priorities._table', compact('priorities'));
         }

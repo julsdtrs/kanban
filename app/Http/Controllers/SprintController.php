@@ -10,11 +10,20 @@ class SprintController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
         $query = Sprint::with('board.project');
         if ($request->filled('board_id')) {
             $query->where('board_id', $request->board_id);
         }
-        $sprints = $query->latest('id')->paginate(15);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                    ->orWhere('goal', 'like', "%{$term}%")
+                    ->orWhere('state', 'like', "%{$term}%");
+            });
+        }
+        $sprints = $query->latest('id')->paginate($perPage);
         $boards = Board::with('project:id,name')->orderBy('name')->get();
         if ($request->filled('partial')) {
             return view('sprints._table', compact('sprints', 'boards'));

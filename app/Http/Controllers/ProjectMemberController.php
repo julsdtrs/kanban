@@ -12,6 +12,7 @@ class ProjectMemberController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
         $query = DB::table('project_members')
             ->join('projects', 'project_members.project_id', '=', 'projects.id')
             ->join('users', 'project_members.user_id', '=', 'users.id')
@@ -20,7 +21,16 @@ class ProjectMemberController extends Controller
         if ($request->filled('project_id')) {
             $query->where('project_members.project_id', $request->project_id);
         }
-        $items = $query->paginate(15);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('projects.name', 'like', "%{$term}%")
+                    ->orWhere('users.display_name', 'like', "%{$term}%")
+                    ->orWhere('users.username', 'like', "%{$term}%")
+                    ->orWhere('roles.name', 'like', "%{$term}%");
+            });
+        }
+        $items = $query->paginate($perPage);
         $projects = Project::where('is_active', true)->orderBy('name')->get();
         if ($request->filled('partial')) {
             return view('project-members._table', compact('items', 'projects'));

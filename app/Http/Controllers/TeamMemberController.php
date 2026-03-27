@@ -11,6 +11,7 @@ class TeamMemberController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
         $query = DB::table('team_members')
             ->join('teams', 'team_members.team_id', '=', 'teams.id')
             ->join('users', 'team_members.user_id', '=', 'users.id')
@@ -18,7 +19,16 @@ class TeamMemberController extends Controller
         if ($request->filled('team_id')) {
             $query->where('team_members.team_id', $request->team_id);
         }
-        $members = $query->paginate(15);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('teams.name', 'like', "%{$term}%")
+                    ->orWhere('users.display_name', 'like', "%{$term}%")
+                    ->orWhere('users.username', 'like', "%{$term}%")
+                    ->orWhere('team_members.role_in_team', 'like', "%{$term}%");
+            });
+        }
+        $members = $query->paginate($perPage);
         $teams = Team::orderBy('name')->get();
         if ($request->filled('partial')) {
             return view('team-members._table', compact('members', 'teams'));

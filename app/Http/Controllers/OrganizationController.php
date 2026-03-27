@@ -9,7 +9,16 @@ class OrganizationController extends Controller
 {
     public function index(Request $request)
     {
-        $organizations = Organization::withCount('projects')->orderByDesc('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = Organization::withCount('projects');
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                    ->orWhere('description', 'like', "%{$term}%");
+            });
+        }
+        $organizations = $query->orderByDesc('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('organizations._table', compact('organizations'));
         }

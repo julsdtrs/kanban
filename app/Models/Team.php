@@ -17,7 +17,7 @@ class Team extends Model
         });
     }
 
-    public function members(): BelongsToManyMany
+    public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'team_members')->withPivot('role_in_team');
     }

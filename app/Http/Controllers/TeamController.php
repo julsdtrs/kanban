@@ -10,7 +10,16 @@ class TeamController extends Controller
 {
     public function index(Request $request)
     {
-        $teams = Team::withCount(['members', 'projects'])->orderByDesc('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = Team::withCount(['members', 'projects']);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                    ->orWhere('description', 'like', "%{$term}%");
+            });
+        }
+        $teams = $query->orderByDesc('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('teams._table', compact('teams'));
         }

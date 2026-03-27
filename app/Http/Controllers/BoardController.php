@@ -11,8 +11,13 @@ class BoardController extends Controller
 {
     public function index(Request $request)
     {
-        $boards = Board::with(['project:id,name,project_key', 'projects:id,name,project_key'])
-            ->latest('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = Board::with(['project:id,name,project_key', 'projects:id,name,project_key']);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where('name', 'like', "%{$term}%");
+        }
+        $boards = $query->latest('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('boards._table', compact('boards'));
         }

@@ -3,6 +3,7 @@ $createLoadUrl = route('team-members.create');
 $createSubmitUrl = route('team-members.store');
 $refreshUrl = request()->has('team_id') ? route('team-members.index', ['team_id' => request('team_id'), 'partial' => 1]) : route('team-members.index', ['partial' => 1]);
 @endphp
+@include('partials.list-table-controls', ['paginator' => $members, 'searchPlaceholder' => 'Search team members'])
 @if(isset($teams))
 <form method="GET" class="setup-filter-form" action="{{ route('team-members.index') }}">
     @if(request()->has('team_id'))
@@ -42,6 +43,4 @@ $refreshUrl = request()->has('team_id') ? route('team-members.index', ['team_id'
         </tbody>
     </table>
 </div>
-@if(isset($members) && $members->hasPages())
-<div class="card-footer bg-white border-0 pt-0">{{ $members->appends(request()->query())->links() }}</div>
-@endif
+@include('partials.list-table-footer', ['paginator' => $members])

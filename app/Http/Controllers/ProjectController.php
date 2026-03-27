@@ -11,7 +11,17 @@ class ProjectController extends Controller
 {
     public function index(Request $request)
     {
-        $projects = Project::with(['organization:id,name', 'lead:id,username,display_name'])->latest('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = Project::with(['organization:id,name', 'lead:id,username,display_name']);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where(function ($q) use ($term) {
+                $q->where('name', 'like', "%{$term}%")
+                    ->orWhere('project_key', 'like', "%{$term}%")
+                    ->orWhere('project_type', 'like', "%{$term}%");
+            });
+        }
+        $projects = $query->latest('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('projects._table', compact('projects'));
         }

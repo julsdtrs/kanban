@@ -10,7 +10,13 @@ class WorkflowController extends Controller
 {
     public function index(Request $request)
     {
-        $workflows = Workflow::with(['board:id,name,project_id', 'board.project:id,name,project_key'])->latest('id')->paginate(15);
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
+        $query = Workflow::with(['board:id,name,project_id', 'board.project:id,name,project_key']);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where('name', 'like', "%{$term}%");
+        }
+        $workflows = $query->latest('id')->paginate($perPage);
         if ($request->filled('partial')) {
             return view('workflows._table', compact('workflows'));
         }
@@ -31,12 +37,12 @@ class WorkflowController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:150',
-            'board_id' => 'required|exists:boards,id',
+            'board_id' => 'nullable|exists:boards,id',
         ]);
-        $board = Board::find($validated['board_id']);
+        $board = isset($validated['board_id']) ? Board::find($validated['board_id']) : null;
         Workflow::create([
             'name' => $validated['name'],
-            'board_id' => $validated['board_id'],
+            'board_id' => $validated['board_id'] ?? null,
             'project_id' => $board ? $board->project_id : null,
         ]);
         if ($request->ajax() || $request->wantsJson()) {
@@ -66,22 +72,14 @@ class WorkflowController extends Controller
 
     public function update(Request $request, Workflow $workflow)
     {
-        $request->validate(['name' => 'required|string|max:150']);
-        $boardId = $request->input('board_id');
-        $name = $request->input('name');
-        if (! $boardId || ! Board::where('id', $boardId)->exists()) {
-            if ($request->ajax() || $request->wantsJson()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Please select a board.',
-                    'errors' => ['board_id' => ['The selected board is invalid.']],
-                ], 422);
-            }
-            return redirect()->back()->withErrors(['board_id' => 'Please select a board.'])->withInput();
-        }
-        $board = Board::find($boardId);
+        $validated = $request->validate([
+            'name' => 'required|string|max:150',
+            'board_id' => 'nullable|exists:boards,id',
+        ]);
+        $boardId = $validated['board_id'] ?? null;
+        $board = $boardId ? Board::find($boardId) : null;
         $workflow->update([
-            'name' => $name,
+            'name' => $validated['name'],
             'board_id' => $boardId,
             'project_id' => $board ? $board->project_id : null,
         ]);

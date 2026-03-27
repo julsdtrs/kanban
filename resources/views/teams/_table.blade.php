@@ -1,3 +1,4 @@
+@include('partials.list-table-controls', ['paginator' => $teams, 'searchPlaceholder' => 'Search teams'])
 <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
         <thead class="table-light"><tr><th>Name</th><th>Description</th><th>Members</th><th>Projects</th><th width="140"></th></tr></thead>
@@ -20,4 +21,4 @@
         </tbody>
     </table>
 </div>
-@if($teams->hasPages())<div class="card-footer bg-white border-0 pt-0">{{ $teams->appends(request()->query())->links() }}</div>@endif
+@include('partials.list-table-footer', ['paginator' => $teams])

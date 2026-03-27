@@ -8,6 +8,7 @@
     </select>
 </form>
 @endif
+@include('partials.list-table-controls', ['paginator' => $sprints, 'searchPlaceholder' => 'Search sprints'])
 <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
         <thead class="table-light"><tr><th>Board</th><th>Name</th><th>State</th><th>Start</th><th>End</th><th width="140"></th></tr></thead>
@@ -31,4 +32,4 @@
         </tbody>
     </table>
 </div>
-@if($sprints->hasPages())<div class="card-footer bg-white border-0 pt-0">{{ $sprints->appends(request()->query())->links() }}</div>@endif
+@include('partials.list-table-footer', ['paginator' => $sprints])

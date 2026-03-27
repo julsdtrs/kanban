@@ -58,7 +58,7 @@
             <div class="col-md-6">
                 <div class="mb-3">
                     <div class="fw-semibold small text-uppercase text-muted mb-1">Description</div>
-                    <div class="small">{{ $issue->description ?? 'No description.' }}</div>
+                    <div class="small">{!! $issue->description ?: 'No description.' !!}</div>
                 </div>
                 <div>
                     <div class="fw-semibold small text-uppercase text-muted mb-1">Comments</div>

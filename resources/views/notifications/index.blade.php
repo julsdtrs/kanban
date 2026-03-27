@@ -5,6 +5,7 @@
     <h1 class="h3 mb-0">Notifications</h1>
 </div>
 <div class="card border-0 shadow-sm">
+    @include('partials.list-table-controls', ['paginator' => $notifications, 'searchPlaceholder' => 'Search notifications'])
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light"><tr><th>Title</th><th>Message</th><th>Issue</th><th>Read</th><th>Date</th><th width="80"></th></tr></thead>
@@ -24,6 +25,6 @@
             </tbody>
         </table>
     </div>
-    @if($notifications->hasPages())<div class="card-footer bg-white">{{ $notifications->links() }}</div>@endif
+    @include('partials.list-table-footer', ['paginator' => $notifications])
 </div>
 @endsection

@@ -11,11 +11,16 @@ class WorkflowTransitionController extends Controller
 {
     public function index(Request $request)
     {
+        $perPage = max(10, min(100, (int) $request->input('per_page', 10)));
         $query = WorkflowTransition::with(['workflow.project', 'fromStatus', 'toStatus']);
         if ($request->filled('workflow_id')) {
             $query->where('workflow_id', $request->workflow_id);
         }
-        $transitions = $query->latest('id')->paginate(15);
+        if ($request->filled('q')) {
+            $term = trim((string) $request->input('q'));
+            $query->where('transition_name', 'like', "%{$term}%");
+        }
+        $transitions = $query->latest('id')->paginate($perPage);
         $workflows = Workflow::with('project:id,name')->orderBy('name')->get(['id', 'name', 'project_id']);
         if ($request->filled('partial')) {
             return view('workflow-transitions._table', compact('transitions', 'workflows'));

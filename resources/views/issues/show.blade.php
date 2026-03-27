@@ -20,7 +20,7 @@
     <dt class="col-sm-3">Due date</dt><dd class="col-sm-9">{{ $issue->due_date ? $issue->due_date->format('Y-m-d') : '-' }}</dd>
     <dt class="col-sm-3">Parent</dt><dd class="col-sm-9">@if($issue->parent)<a href="{{ route('issues.show', $issue->parent) }}">{{ $issue->parent->issue_key }}</a>@else—@endif</dd>
     <dt class="col-sm-3">Labels</dt><dd class="col-sm-9">@forelse($issue->labels ?? [] as $l)<span class="badge bg-secondary me-1">{{ $l->name }}</span>@empty—@endforelse</dd>
-    <dt class="col-sm-3">Description</dt><dd class="col-sm-9">{{ $issue->description ?? '-' }}</dd>
+    <dt class="col-sm-3">Description</dt><dd class="col-sm-9">@if($issue->description){!! $issue->description !!}@else-@endif</dd>
 </dl>
 </div></div>
 <h6 class="mb-2">Comments</h6>

@@ -3,6 +3,7 @@ $createLoadUrl = route('role-permissions.create');
 $createSubmitUrl = route('role-permissions.store');
 $refreshUrl = request()->has('role_id') ? route('role-permissions.index', ['role_id' => request('role_id'), 'partial' => 1]) : route('role-permissions.index', ['partial' => 1]);
 @endphp
+@include('partials.list-table-controls', ['paginator' => $items, 'searchPlaceholder' => 'Search role permissions'])
 @if(isset($roles))
 <form method="GET" class="setup-filter-form" action="{{ route('role-permissions.index') }}">
     @if(request()->has('role_id'))
@@ -41,6 +42,4 @@ $refreshUrl = request()->has('role_id') ? route('role-permissions.index', ['role
         </tbody>
     </table>
 </div>
-@if(isset($items) && $items->hasPages())
-<div class="card-footer bg-white border-0 pt-0">{{ $items->appends(request()->query())->links() }}</div>
-@endif
+@include('partials.list-table-footer', ['paginator' => $items])
