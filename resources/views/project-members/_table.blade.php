@@ -5,7 +5,7 @@ $refreshUrl = request()->has('project_id') ? route('project-members.index', ['pr
 @endphp
 @include('partials.list-table-controls', ['paginator' => $items, 'searchPlaceholder' => 'Search project members'])
 @if(isset($projects))
-<form method="GET" class="setup-filter-form" action="{{ route('project-members.index') }}">
+<form method="GET" class="setup-filter-form setup-filter-inline" action="{{ route('project-members.index') }}">
     @if(request()->has('project_id'))
     <input type="hidden" name="project_id" value="{{ request('project_id') }}">
     @endif

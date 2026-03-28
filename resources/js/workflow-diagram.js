@@ -177,6 +177,15 @@ function render() {
     const tid = evt.target.data('transitionId');
     if (tid != null && window.highlightTransition) window.highlightTransition(tid, false);
   });
+
+  const refit = () => {
+    if (!cy) return;
+    try {
+      cy.resize();
+      cy.fit(undefined, 20);
+    } catch (e) { /* ignore */ }
+  };
+  requestAnimationFrame(() => requestAnimationFrame(refit));
 }
 
 function highlightTransition(transitionId, on) {

@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\GlobalSearchController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\IssueLabelController;
 use App\Http\Controllers\IssueTypeController;
@@ -42,6 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/board-stats/{project}', [DashboardController::class, 'boardStatsContent'])->name('dashboard.board-stats');
+    Route::get('search/global', GlobalSearchController::class)->name('search.global');
 
     Route::get('kanban', [KanbanController::class, 'index'])->name('kanban.index');
     Route::get('kanban/board/{board}', [KanbanController::class, 'showBoard'])->name('kanban.board.show');

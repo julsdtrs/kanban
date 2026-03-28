@@ -5,7 +5,7 @@ $refreshUrl = request()->has('user_id') ? route('user-roles.index', ['user_id' =
 @endphp
 @include('partials.list-table-controls', ['paginator' => $items, 'searchPlaceholder' => 'Search user roles'])
 @if(isset($users))
-<form method="GET" class="setup-filter-form" action="{{ route('user-roles.index') }}">
+<form method="GET" class="setup-filter-form setup-filter-inline" action="{{ route('user-roles.index') }}">
     @if(request()->has('user_id'))
     <input type="hidden" name="user_id" value="{{ request('user_id') }}">
     @endif

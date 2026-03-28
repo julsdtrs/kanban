@@ -5,7 +5,7 @@ $refreshUrl = request()->has('role_id') ? route('role-permissions.index', ['role
 @endphp
 @include('partials.list-table-controls', ['paginator' => $items, 'searchPlaceholder' => 'Search role permissions'])
 @if(isset($roles))
-<form method="GET" class="setup-filter-form" action="{{ route('role-permissions.index') }}">
+<form method="GET" class="setup-filter-form setup-filter-inline" action="{{ route('role-permissions.index') }}">
     @if(request()->has('role_id'))
     <input type="hidden" name="role_id" value="{{ request('role_id') }}">
     @endif

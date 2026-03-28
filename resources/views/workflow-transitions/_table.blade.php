@@ -1,6 +1,7 @@
 @if(isset($workflows) && $workflows->isNotEmpty())
-<form method="GET" class="p-2 border-bottom bg-light">
-    <select name="workflow_id" class="form-select form-select-sm w-auto d-inline-block" onchange="this.form.submit()">
+<form method="GET" class="setup-filter-form setup-filter-inline" action="{{ url()->current() }}">
+    <span class="setup-filter-form-label"><i class="bi bi-diagram-3"></i> Workflow</span>
+    <select name="workflow_id" class="form-select form-select-sm w-auto" onchange="this.form.submit()">
         <option value="">All workflows</option>
         @foreach($workflows as $w)
         <option value="{{ $w->id }}" {{ request('workflow_id') == $w->id ? 'selected' : '' }}>{{ $w->name }}</option>

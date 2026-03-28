@@ -1,12 +1,12 @@
 <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2 flex-shrink-0">
     <div class="d-flex align-items-center gap-2 flex-wrap">
         @if(isset($sprints) && $sprints->isNotEmpty())
-        <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" id="kanbanSprintDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="dropdown kanban-toolbar-dropdown">
+            <button class="btn dropdown-toggle kanban-board-dropdown-btn d-flex align-items-center gap-2" type="button" id="kanbanSprintDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-lightning-charge"></i>
                 <span id="kanban-sprint-label">{{ $sprint ? ($sprint->name ?? 'Sprint #'.$sprint->id) : 'All sprints' }}</span>
             </button>
-            <ul class="dropdown-menu" aria-labelledby="kanbanSprintDropdown">
+            <ul class="dropdown-menu kanban-board-dropdown-menu" aria-labelledby="kanbanSprintDropdown">
                 @php
                     $sprintBaseUrl = (isset($currentBoard) && $currentBoard ? route('kanban.board.show', $currentBoard) : route('kanban.board', $project));
                 @endphp
@@ -17,13 +17,13 @@
             </ul>
         </div>
         @endif
-        <div class="dropdown">
-            <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" id="kanbanBoardDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <div class="dropdown kanban-toolbar-dropdown">
+            <button class="btn dropdown-toggle kanban-board-dropdown-btn d-flex align-items-center gap-2" type="button" id="kanbanBoardDropdown" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-grid-3x3-gap"></i>
                 <span id="kanban-board-label">@if(isset($currentBoard) && $currentBoard){{ $currentBoard->name ?? 'Board' }}@else{{ $project->name }}@endif</span>
                 @if(isset($currentBoard) && $currentBoard)<span class="badge bg-secondary rounded-pill" id="kanban-board-key">{{ $currentBoard->board_type ?? 'kanban' }}</span>@else<span class="badge bg-primary rounded-pill" id="kanban-board-key">{{ $project->project_key }}</span>@endif
             </button>
-            <ul class="dropdown-menu" aria-labelledby="kanbanBoardDropdown">
+            <ul class="dropdown-menu kanban-board-dropdown-menu" aria-labelledby="kanbanBoardDropdown">
                 @if(($boards ?? collect())->isNotEmpty())
                     @foreach($boards as $b)
                     <li>

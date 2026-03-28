@@ -6,7 +6,7 @@
         <h1 class="h3 mb-0">Issues</h1>
         <a href="{{ route('issues.create') }}" class="btn btn-primary"><i class="bi bi-plus-lg me-1"></i> New Issue</a>
     </div>
-    <form method="GET" class="row g-2 mb-3 flex-shrink-0">
+    <form method="GET" class="row g-2 mb-3 flex-shrink-0 issues-toolbar-filters">
         @if(request()->filled('q'))
         <input type="hidden" name="q" value="{{ request('q') }}">
         @endif

@@ -1,18 +1,19 @@
 @extends('layouts.app')
 @section('title', 'New Issue')
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="issue-create-page">
+<div class="d-flex justify-content-between align-items-center mb-4 issue-create-page-header">
     <h1 class="h3 mb-0 page-title">New Issue</h1>
     <a href="{{ route('issues.index') }}" class="btn btn-outline-secondary">
         <i class="bi bi-arrow-left me-1"></i> Back
     </a>
 </div>
 
-<div class="card border-0 shadow-sm setup-list-card">
-    <div class="card-header bg-transparent border-bottom py-3">
+<div class="card border-0 shadow-sm issue-create-card">
+    <div class="card-header bg-transparent border-bottom py-3 flex-shrink-0">
         <span class="fw-600 text-body">Create issue details</span>
     </div>
-    <div class="card-body p-4 issue-create-scroll">
+    <div class="card-body p-4 issue-create-scroll scrollable">
         <form action="{{ route('issues.store') }}" method="POST">
             @csrf
 
@@ -143,15 +144,42 @@
         </form>
     </div>
 </div>
+</div>
 @endsection
 
 @push('styles')
 <link href="https://cdn.jsdelivr.net/npm/summernote@0.9.0/dist/summernote-lite.min.css" rel="stylesheet">
-<style>
+<style id="taskflow-page-issues-create">
+    /*
+     * Scrollable form: #app-main-inner is a flex column (flex:1; min-height:0; overflow-y:auto).
+     * Use flex-basis 0 so this page fills remaining height; do NOT use .setup-list-card here —
+     * layout forces .setup-list-card .card-body { overflow: visible } which blocks inner scroll.
+     */
+    #app-main-content > .issue-create-page {
+        flex: 1 1 0;
+        min-height: 0;
+    }
+    .issue-create-page {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+    .issue-create-page-header {
+        flex-shrink: 0;
+    }
+    .issue-create-card {
+        flex: 1 1 0;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+    }
     .issue-create-scroll {
-        max-height: calc(100vh - 180px);
-        overflow-y: auto;
+        flex: 1 1 0;
+        min-height: 0;
+        max-height: 100%;
+        overflow-y: auto !important;
         overflow-x: hidden;
+        overscroll-behavior: contain;
     }
 </style>
 @endpush

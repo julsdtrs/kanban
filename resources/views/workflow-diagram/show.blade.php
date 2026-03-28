@@ -11,7 +11,7 @@
                 <span id="workflow-diagram-label">{{ $workflow->name }}</span>
                 <span class="badge bg-primary rounded-pill" id="workflow-diagram-project">{{ $workflow->project->name ?? '' }}</span>
             </button>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="workflowDiagramDropdown">
+            <ul class="dropdown-menu dropdown-menu-end kanban-board-dropdown-menu" aria-labelledby="workflowDiagramDropdown">
                 @foreach($workflows as $wf)
                 <li>
                     <a class="workflow-diagram-select dropdown-item d-flex justify-content-between align-items-center {{ $wf->id === $workflow->id ? 'active' : '' }}" href="{{ route('workflows.diagram.show', $wf) }}" data-workflow-id="{{ $wf->id }}" data-workflow-name="{{ e($wf->name) }}" data-project-name="{{ e($wf->project->name ?? '') }}">
@@ -33,17 +33,21 @@
 @vite(['resources/js/workflow-diagram.js'])
 @endsection
 @push('styles')
-<style>
+<style id="taskflow-page-workflow-diagram">
 .workflow-page-fill { display: flex; flex-direction: column; min-height: 100%; flex: 1; }
-.workflow-page .flat-card { border: 1px solid #e9ecef; box-shadow: none; border-radius: 8px; }
+#app-main-content > .workflow-page-fill {
+    flex: 1 1 0;
+    min-height: 0;
+}
+.workflow-page .flat-card { border: 1px solid #e9ecef; box-shadow: none; border-radius: var(--radius-lg); }
 .workflow-page .workflow-card .card-body { padding: 1.25rem; }
-.workflow-diagram-wrap { background: #f8f9fa; border-radius: 8px; min-height: 280px; overflow: hidden; border: 1px solid #e9ecef; position: relative; display: flex; flex-direction: column; }
+.workflow-diagram-wrap { background: #f8f9fa; border-radius: var(--radius-lg); min-height: 280px; overflow: hidden; border: 1px solid #e9ecef; position: relative; display: flex; flex-direction: column; }
 .workflow-cy { flex: 1; min-height: 280px; width: 100%; }
 .workflow-empty-msg { position: absolute; margin: 1rem; color: #6c757d; font-size: 0.875rem; }
 .workflow-transitions-list { display: flex; flex-direction: column; gap: 0.5rem; }
 .workflow-transitions-list .workflow-transition-item {
     display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem 0.75rem;
-    background: #fff !important; border: 1px solid #e9ecef; border-radius: 8px;
+    background: #fff !important; border: 1px solid #e9ecef; border-radius: var(--radius-lg);
     transition: background .15s, border-color .15s;
 }
 .workflow-transitions-list .workflow-transition-item:hover,
@@ -54,7 +58,7 @@
 .workflow-transitions-list .workflow-transition-item.drag-over {
     background: #e8ecff !important; border-color: #696cff;
 }
-.workflow-transition-item .from-badge, .workflow-transition-item .to-badge { padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.8125rem; font-weight: 500; }
+.workflow-transition-item .from-badge, .workflow-transition-item .to-badge { padding: 0.2rem 0.5rem; border-radius: var(--radius); font-size: 0.8125rem; font-weight: 500; }
 .workflow-transition-item .from-badge { color: #fff; }
 .workflow-transition-item .to-badge { background: color-mix(in srgb, var(--tint) 18%, #fff); color: var(--tint); }
 .workflow-transition-item .arrow-icon { color: #adb5bd; font-size: 0.75rem; }

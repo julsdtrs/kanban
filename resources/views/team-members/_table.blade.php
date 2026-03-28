@@ -5,7 +5,7 @@ $refreshUrl = request()->has('team_id') ? route('team-members.index', ['team_id'
 @endphp
 @include('partials.list-table-controls', ['paginator' => $members, 'searchPlaceholder' => 'Search team members'])
 @if(isset($teams))
-<form method="GET" class="setup-filter-form" action="{{ route('team-members.index') }}">
+<form method="GET" class="setup-filter-form setup-filter-inline" action="{{ route('team-members.index') }}">
     @if(request()->has('team_id'))
     <input type="hidden" name="team_id" value="{{ request('team_id') }}">
     @endif
