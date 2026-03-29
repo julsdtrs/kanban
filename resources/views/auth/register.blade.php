@@ -1,46 +1,57 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Register - TaskFlow</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-</head>
-<body class="bg-light min-vh-100 d-flex align-items-center justify-content-center">
-    <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
-        <div class="card-body p-4">
-            <h4 class="card-title mb-4"><i class="bi bi-kanban text-primary me-2"></i> TaskFlow</h4>
-            <form method="POST" action="{{ route('register') }}">
-                @csrf
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username') }}" required>
-                    @error('username')<div class="invalid-feedback">{{ $message }}</div>@enderror
+@extends('layouts.auth')
+
+@section('title', 'Register')
+
+@section('content')
+    <div class="auth-card">
+        <div class="auth-brand auth-field" style="animation-delay: 0.02s">
+            <span class="auth-brand__icon" aria-hidden="true"><i class="bi bi-kanban-fill"></i></span>
+            <span class="auth-brand__text">TaskFlow</span>
+        </div>
+        <p class="auth-lead auth-field" style="animation-delay: 0.06s">Create an account to organize work with your team.</p>
+
+        <form method="POST" action="{{ route('register') }}" class="auth-form" novalidate>
+            @csrf
+            <div class="auth-field" style="animation-delay: 0.08s">
+                <label for="username" class="auth-label">Username</label>
+                <input type="text" class="form-control @error('username') is-invalid @enderror" id="username" name="username" value="{{ old('username') }}" required autocomplete="username" placeholder="jane.doe">
+                @error('username')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+            </div>
+            <div class="auth-field" style="animation-delay: 0.1s">
+                <label for="email" class="auth-label">Email</label>
+                <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="you@company.com">
+                @error('email')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+            </div>
+            <div class="auth-field" style="animation-delay: 0.12s">
+                <label for="display_name" class="auth-label">Display name <span class="fw-normal text-muted">(optional)</span></label>
+                <input type="text" class="form-control @error('display_name') is-invalid @enderror" id="display_name" name="display_name" value="{{ old('display_name') }}" autocomplete="name" placeholder="Jane Doe">
+                @error('display_name')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+            </div>
+            <div class="auth-field" style="animation-delay: 0.14s">
+                <label for="password" class="auth-label">Password</label>
+                <div class="auth-input-group">
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required autocomplete="new-password" placeholder="At least 8 characters">
+                    <button type="button" class="auth-toggle-password" aria-label="Show password"><i class="bi bi-eye"></i></button>
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control @error('email') is-invalid @enderror" id="email" name="email" value="{{ old('email') }}" required>
-                    @error('email')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                @error('password')<div class="invalid-feedback d-block">{{ $message }}</div>@enderror
+            </div>
+            <div class="auth-field" style="animation-delay: 0.16s">
+                <label for="password_confirmation" class="auth-label">Confirm password</label>
+                <div class="auth-input-group">
+                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password_confirmation" name="password_confirmation" required autocomplete="new-password" placeholder="Repeat password">
+                    <button type="button" class="auth-toggle-password" aria-label="Show password"><i class="bi bi-eye"></i></button>
                 </div>
-                <div class="mb-3">
-                    <label for="display_name" class="form-label">Display name</label>
-                    <input type="text" class="form-control @error('display_name') is-invalid @enderror" id="display_name" name="display_name" value="{{ old('display_name') }}">
-                    @error('display_name')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control @error('password') is-invalid @enderror" id="password" name="password" required>
-                    @error('password')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
-                <div class="mb-3">
-                    <label for="password_confirmation" class="form-label">Confirm password</label>
-                    <input type="password" class="form-control" id="password_confirmation" name="password_confirmation" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Register</button>
-            </form>
-            <p class="mt-3 mb-0 text-muted small">Already have an account? <a href="{{ route('login') }}">Login</a></p>
+            </div>
+            <div class="auth-field mb-0" style="animation-delay: 0.2s">
+                <button type="submit" class="btn btn-auth-submit">
+                    <span class="btn-label">Create account</span>
+                    <span class="btn-spinner" aria-hidden="true"><i class="bi bi-arrow-repeat fs-5"></i></span>
+                </button>
+            </div>
+        </form>
+
+        <div class="auth-footer auth-field" style="animation-delay: 0.24s">
+            Already have an account? <a href="{{ route('login') }}">Sign in</a>
         </div>
     </div>
-</body>
-</html>
+@endsection

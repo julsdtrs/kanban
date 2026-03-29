@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OrganizationController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PriorityController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\RoleController;
@@ -41,6 +42,7 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+    Route::get('profile', [ProfileController::class, 'show'])->name('profile');
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('dashboard/board-stats/{project}', [DashboardController::class, 'boardStatsContent'])->name('dashboard.board-stats');
     Route::get('search/global', GlobalSearchController::class)->name('search.global');

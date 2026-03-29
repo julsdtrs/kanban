@@ -50,6 +50,8 @@
             --sidebar-text-muted: #64748b;
             --sidebar-hover: #f0f2f7;
             --sidebar-active: rgba(91, 95, 239, 0.14);
+            /* Inset panel behind Setup sub-nav (Identity & access, etc.) */
+            --setup-nav-bg: #eef1f6;
             --primary: #5b5fef;
             --primary-hover: #4f52e5;
             --body-bg: #f1f3f9;
@@ -96,6 +98,7 @@
             --shadow: 0 4px 20px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.25);
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.28);
             --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.45);
+            --setup-nav-bg: rgba(15, 23, 42, 0.55);
         }
         html[data-theme="dark"] .app-header {
             background: var(--sidebar-bg);
@@ -120,7 +123,18 @@
         html[data-theme="dark"] .app-sidebar .nav-link:hover i { color: var(--primary); }
         html[data-theme="dark"] .app-sidebar .nav-link:hover::before { background: rgba(139, 147, 255, 0.45); }
         html[data-theme="dark"] .app-sidebar .setup-nav-scroll {
-            background: rgba(7, 11, 20, 0.45);
+            background: var(--setup-nav-bg);
+            box-shadow: inset 0 1px 0 rgba(148, 163, 184, 0.08);
+        }
+        html[data-theme="dark"] .app-sidebar .setup-nav-scroll .nav-link:hover {
+            background: rgba(139, 147, 255, 0.1);
+        }
+        html[data-theme="dark"] .app-sidebar .setup-nav-scroll .nav-link.active {
+            background: rgba(139, 147, 255, 0.16);
+            box-shadow: none;
+        }
+        html[data-theme="dark"] .app-sidebar .setup-nav-scroll .nav-section-label.mt-2 {
+            border-top-color: rgba(148, 163, 184, 0.16);
         }
         html[data-theme="dark"] .card {
             background: #161f2e;
@@ -180,7 +194,10 @@
             color: var(--text-body);
         }
         html[data-theme="dark"] .app-main-loading {
-            background: rgba(7, 11, 20, 0.88) !important;
+            background: var(--body-bg) !important;
+        }
+        html[data-theme="ocean"] .app-main-loading {
+            background: var(--body-bg) !important;
         }
         html[data-theme="dark"] .dropdown-menu {
             background: #161f2e;
@@ -220,15 +237,17 @@
             --shadow: 0 1px 3px rgba(19, 78, 74, 0.06), 0 6px 16px rgba(13, 148, 136, 0.07);
             --shadow-sm: 0 1px 2px rgba(19, 78, 74, 0.05);
             --shadow-lg: 0 10px 28px rgba(19, 78, 74, 0.08), 0 4px 12px rgba(13, 148, 136, 0.06);
+            --setup-nav-bg: #e4f2ef;
         }
         html[data-theme="ocean"] .app-sidebar {
             box-shadow: 2px 0 16px rgba(13, 148, 136, 0.06);
         }
         html[data-theme="ocean"] .app-sidebar .setup-nav-scroll {
-            background: #e4f2ef;
+            background: var(--setup-nav-bg);
+            box-shadow: inset 0 1px 0 rgba(19, 78, 74, 0.06);
         }
-        html[data-theme="ocean"] .app-sidebar .setup-nav-scroll .nav-section-label {
-            color: #5b7c78;
+        html[data-theme="ocean"] .app-sidebar .setup-nav-scroll .nav-section-label.mt-2 {
+            border-top-color: rgba(19, 78, 74, 0.12);
         }
         html[data-theme="ocean"] .app-sidebar .sidebar-brand .brand-text { color: var(--text-body); }
         html[data-theme="ocean"] .app-header {
@@ -358,6 +377,10 @@
             background: var(--primary);
             box-shadow: none;
         }
+        .app-sidebar .nav-link:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--primary) 45%, transparent);
+            outline-offset: 2px;
+        }
         .app-sidebar .nav-section-setup { padding: 0; list-style: none; }
         /* Align Setup with Dashboard/Issues/Kanban/Workflow: same padding and margin as .nav-link */
         .app-sidebar .nav-section-toggle {
@@ -371,17 +394,30 @@
             border: none !important;
             cursor: pointer;
             font-size: .9375rem;
-            font-weight: 400;
+            font-weight: 500;
             letter-spacing: 0;
             text-transform: none;
-            border-radius: 0;
-            transition: color .24s ease, background .24s ease, transform .18s ease;
+            border-radius: var(--radius-lg) !important;
+            transition: color .22s ease, background .22s ease, transform .18s ease, box-shadow .22s ease;
             box-sizing: border-box;
         }
         .app-sidebar .nav-section-toggle:hover {
             color: var(--sidebar-text);
-            background: var(--sidebar-hover);
+            background: var(--sidebar-hover) !important;
             transform: translateX(2px);
+        }
+        .app-sidebar .nav-section-toggle:focus-visible {
+            outline: 2px solid color-mix(in srgb, var(--primary) 40%, transparent);
+            outline-offset: 2px;
+        }
+        .app-sidebar .nav-section-toggle .setup-toggle-icon {
+            opacity: 0.75;
+            color: var(--sidebar-text-muted);
+            transition: transform .22s ease, opacity .2s ease, color .2s ease;
+        }
+        .app-sidebar .nav-section-toggle:hover .setup-toggle-icon {
+            opacity: 1;
+            color: var(--primary);
         }
         .app-sidebar .nav-section-toggle .nav-label { white-space: nowrap; }
         .app-sidebar .nav-section-toggle > span:first-child {
@@ -389,33 +425,89 @@
             padding: 0 !important; margin: 0 !important;
         }
         .app-sidebar .nav-section-toggle > span:first-child i { font-size: 1.25rem; margin-right: .75rem; opacity: .9; width: 1.5rem; min-width: 1.5rem; text-align: center; flex-shrink: 0; }
-        .app-sidebar .setup-toggle-icon { font-size: .75rem; transition: transform .2s ease; flex-shrink: 0; margin-left: auto; }
+        .app-sidebar .setup-toggle-icon { font-size: .8rem; flex-shrink: 0; margin-left: auto; }
         .app-sidebar .nav-section-toggle[aria-expanded="false"] .setup-toggle-icon { transform: rotate(-90deg); }
         .app-sidebar .setup-nav-item { list-style: none; flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; max-height: 100%; }
         .app-sidebar .setup-nav-item .setup-nav-collapse.collapse.show { display: flex !important; flex: 1; min-height: 0; flex-direction: column; overflow: hidden; max-height: 100%; }
         .app-sidebar .setup-nav-scroll {
             flex: 1; min-height: 0; overflow-y: auto; overflow-x: hidden;
             -webkit-overflow-scrolling: touch;
-            background: #eef1f6;
+            background: var(--setup-nav-bg);
+            box-shadow: inset 0 1px 0 rgba(15, 23, 42, 0.06);
             scrollbar-width: thin;
             scrollbar-color: rgba(148,163,184,.55) rgba(148,163,184,.16);
         }
-        .app-sidebar .setup-nav-scroll .nav { padding: .25rem 0 .75rem; }
-        .app-sidebar .setup-nav-scroll .nav-link {
-            padding: .5rem 1.5rem .5rem 2.25rem;
-            font-size: .875rem;
-            border-left: 2px solid transparent;
+        .app-sidebar .setup-nav-scroll .nav {
+            padding: .35rem 0 .85rem;
+            gap: 0.125rem;
+            display: flex;
+            flex-direction: column;
         }
-        .app-sidebar .setup-nav-scroll .nav-link:hover { border-left-color: transparent; }
-        .app-sidebar .setup-nav-scroll .nav-link.active { border-left-color: transparent; }
-        .app-sidebar .setup-nav-scroll .nav-link i { font-size: 1.125rem; margin-right: .625rem; width: 1.25rem; }
+        .app-sidebar .setup-nav-scroll .nav-link {
+            padding: .52rem 1rem .52rem 1.85rem;
+            margin: 0 0.45rem;
+            font-size: .875rem;
+            border-left: 0;
+            transition: color .22s ease, background .22s ease, transform .18s ease, box-shadow .22s ease;
+        }
+        .app-sidebar .setup-nav-scroll .nav-link::before {
+            left: 0.45rem;
+            top: 22%;
+            height: 56%;
+            width: 3px;
+            border-radius: 4px;
+            transition: background .22s ease, height .2s ease, top .2s ease;
+        }
+        .app-sidebar .setup-nav-scroll .nav-link:hover {
+            background: color-mix(in srgb, var(--primary) 9%, var(--setup-nav-bg));
+            transform: translateX(1px);
+        }
+        .app-sidebar .setup-nav-scroll .nav-link:hover::before {
+            background: color-mix(in srgb, var(--primary) 42%, transparent);
+        }
+        .app-sidebar .setup-nav-scroll .nav-link.active {
+            background: color-mix(in srgb, var(--primary) 15%, var(--setup-nav-bg));
+            box-shadow: 0 1px 0 rgba(15, 23, 42, 0.04);
+        }
+        .app-sidebar .setup-nav-scroll .nav-link.active::before {
+            top: 18%;
+            height: 64%;
+        }
+        .app-sidebar .setup-nav-scroll .nav-link i {
+            font-size: 1.08rem;
+            margin-right: .65rem;
+            width: 1.3rem;
+            transition: color .2s ease, transform .2s ease, opacity .2s ease;
+        }
+        .app-sidebar .setup-nav-scroll .nav-link:hover i {
+            transform: scale(1.04);
+        }
         .app-sidebar .setup-nav-scroll .nav-section-label {
-            font-size: 0.7rem;
+            font-size: 0.6875rem;
             text-transform: uppercase;
-            letter-spacing: .09em;
-            color: #a1acb8;
-            padding: .75rem 1.5rem .25rem 2.25rem;
-            font-weight: 600;
+            letter-spacing: .1em;
+            color: var(--sidebar-text-muted);
+            padding: 0.9rem 1.25rem 0.4rem 1.85rem;
+            margin: 0;
+            font-weight: 700;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .app-sidebar .setup-nav-scroll .nav-section-label::before {
+            content: "";
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            flex-shrink: 0;
+            background: color-mix(in srgb, var(--primary) 45%, var(--sidebar-text-muted));
+            opacity: 0.75;
+        }
+        .app-sidebar .setup-nav-scroll .nav-section-label.mt-2 {
+            margin-top: 0.35rem;
+            padding-top: 1.15rem;
+            border-top: 1px solid color-mix(in srgb, var(--sidebar-text-muted) 22%, var(--setup-nav-bg));
         }
         .app-sidebar .setup-nav-scroll::-webkit-scrollbar { width: 6px; }
         .app-sidebar .setup-nav-scroll::-webkit-scrollbar-track { background: rgba(148,163,184,.14); border-radius: 3px; }
@@ -1316,8 +1408,21 @@
         .form-control, .form-select {
             border-radius: var(--radius); border: 1px solid var(--border-color);
             padding: 0.5rem 0.875rem; font-size: 0.9375rem;
-            background: var(--input-bg); color: var(--text-body);
+            background-color: var(--input-bg); color: var(--text-body);
             line-height: 1.35;
+        }
+        /* Don’t use background shorthand on .form-select — it removes Bootstrap’s chevron SVG. */
+        select.form-select:not([multiple]):where(:not([size]), [size="1"]) {
+            padding-right: 2.25rem;
+            background-repeat: no-repeat;
+            background-position: right 0.65rem center;
+            background-size: 16px 12px;
+        }
+        .form-select-sm:not([multiple]):where(:not([size]), [size="1"]) {
+            padding-right: 2rem;
+        }
+        .form-select-lg:not([multiple]):where(:not([size]), [size="1"]) {
+            padding-right: 2.5rem;
         }
         input.form-control:not([type="file"]):not([type="range"]):not(.form-control-sm):not(.form-control-lg):not(.form-control-plaintext),
         .form-floating > .form-control:not(textarea):not(.form-control-sm):not(.form-control-lg) {
@@ -1606,75 +1711,238 @@
         .card .table thead th:last-child { border-top-right-radius: 0; }
         .app-main-inner > * { min-width: 0; }
         .app-main-loading {
-            transition: opacity 0.38s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.38s step-end;
+            transition: opacity 0.28s ease, visibility 0.28s step-end;
             opacity: 0;
             pointer-events: none;
             visibility: hidden;
-            background: rgba(255, 255, 255, 0.78) !important;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: var(--body-bg) !important;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
         }
         .app-main-loading.is-visible {
             opacity: 1;
             pointer-events: auto;
             visibility: visible;
-            transition: opacity 0.32s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s step-start;
+            transition: opacity 0.22s ease, visibility 0s step-start;
         }
-        .taskflow-module-loader {
+        .taskflow-module-loader.taskflow-splash {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            min-width: 0;
+            min-height: 0;
+        }
+        .taskflow-module-loader.taskflow-splash.taskflow-splash--kanban {
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+        .taskflow-kanban-loading {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.125rem;
+            padding: 1.25rem 1.5rem;
+            animation: taskflow-minimal-fade 0.38s ease both;
         }
-        .taskflow-loader-rings {
-            position: relative;
-            width: 52px;
-            height: 52px;
+        @keyframes taskflow-minimal-fade {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        .taskflow-loader-rings::before,
-        .taskflow-loader-rings::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            border: 2px solid transparent;
-            border-top-color: var(--primary);
-            animation: taskflowLoaderSpin 0.85s linear infinite;
+        .taskflow-kanban-board {
+            width: 100%;
+            max-width: 20.5rem;
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            border-top: 3px solid var(--primary);
+            background: var(--input-bg);
+            overflow: hidden;
+            box-shadow: none;
+            animation: taskflow-kanban-board-rise 0.44s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
-        .taskflow-loader-rings::after {
-            inset: 7px;
-            border-top-color: color-mix(in srgb, var(--primary) 50%, #a78bfa);
-            animation-duration: 1.15s;
-            animation-direction: reverse;
+        @keyframes taskflow-kanban-board-rise {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
-        @keyframes taskflowLoaderSpin {
-            to { transform: rotate(360deg); }
+        .taskflow-kanban-board__head {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            column-gap: 0.25rem;
+            padding: 0.62rem 0.85rem 0.58rem;
+            font-size: 0.625rem;
+            font-weight: 600;
+            letter-spacing: 0.09em;
+            text-transform: uppercase;
+            color: var(--text-body);
+            border-bottom: 1px solid var(--border-light);
+            background: color-mix(in srgb, var(--primary) 8%, var(--header-bg));
         }
-        .taskflow-loader-label {
-            font-size: 0.75rem;
+        .taskflow-kanban-board__head span {
+            text-align: center;
+            animation: taskflow-kanban-head-pulse 1.4s ease-in-out infinite;
+        }
+        .taskflow-kanban-board__head span:nth-child(1) { animation-delay: 0s; }
+        .taskflow-kanban-board__head span:nth-child(2) { animation-delay: 0.18s; }
+        .taskflow-kanban-board__head span:nth-child(3) { animation-delay: 0.36s; }
+        @keyframes taskflow-kanban-head-pulse {
+            0%, 100% {
+                opacity: 0.42;
+                color: var(--text-muted);
+            }
+            50% {
+                opacity: 1;
+                color: var(--primary);
+            }
+        }
+        .taskflow-kanban-board__canvas {
+            margin: 0;
+            line-height: 0;
+            background: color-mix(in srgb, var(--body-bg) 96%, var(--primary));
+        }
+        .taskflow-kanban-gif {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 1;
+            display: block;
+            vertical-align: top;
+        }
+        .taskflow-minimal-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 0.45rem;
+            height: 2.125rem;
+        }
+        .taskflow-minimal-bars span {
+            display: block;
+            width: 6px;
+            border-radius: 1px;
+            background: var(--primary);
+            animation: taskflow-minimal-bar 0.85s ease-in-out infinite;
+            transform-origin: center bottom;
+        }
+        .taskflow-minimal-bars span:nth-child(1) { height: 42%; animation-delay: 0s; }
+        .taskflow-minimal-bars span:nth-child(2) { height: 68%; animation-delay: 0.1s; }
+        .taskflow-minimal-bars span:nth-child(3) { height: 100%; animation-delay: 0.2s; }
+        @keyframes taskflow-minimal-bar {
+            0%, 100% { transform: scaleY(0.62); opacity: 0.45; }
+            50% { transform: scaleY(1); opacity: 1; }
+        }
+        .taskflow-minimal-caption {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            margin: 0;
+            font-size: 0.6875rem;
             font-weight: 600;
             color: var(--text-muted);
-            letter-spacing: 0.08em;
+            letter-spacing: 0.1em;
             text-transform: uppercase;
-            animation: taskflowLoaderPulse 1.15s ease-in-out infinite;
         }
-        @keyframes taskflowLoaderPulse {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        .taskflow-minimal-caption::before {
+            content: '';
+            flex-shrink: 0;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--primary);
+            opacity: 0.9;
+            animation: taskflow-kanban-caption-dot 1.15s ease-in-out infinite;
+        }
+        @keyframes taskflow-kanban-caption-dot {
+            0%, 100% {
+                opacity: 0.35;
+                transform: scale(0.88);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        .taskflow-minimal-caption kbd {
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 0.875rem;
+            letter-spacing: -0.04em;
+            text-transform: none;
+            color: var(--text-body);
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .taskflow-minimal-bars--sm {
+            height: 1.875rem;
+            gap: 0.35rem;
+        }
+        .taskflow-minimal-bars--sm span {
+            width: 5px;
+        }
+        .taskflow-minimal-bars--sm span:nth-child(1) { height: 38%; animation-delay: 0s; }
+        .taskflow-minimal-bars--sm span:nth-child(2) { height: 64%; animation-delay: 0.1s; }
+        .taskflow-minimal-bars--sm span:nth-child(3) { height: 100%; animation-delay: 0.2s; }
+        .taskflow-splash__status {
+            font-size: 0.8125rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.01em;
+        }
+        .taskflow-splash__dots span {
+            animation: taskflow-dot-fade 1.35s ease-in-out infinite;
+        }
+        .taskflow-splash__dots span:nth-child(1) { animation-delay: 0s; }
+        .taskflow-splash__dots span:nth-child(2) { animation-delay: 0.22s; }
+        .taskflow-splash__dots span:nth-child(3) { animation-delay: 0.44s; }
+        @keyframes taskflow-dot-fade {
+            0%, 100% { opacity: 0.2; }
+            35% { opacity: 1; }
+        }
+        .taskflow-crud-loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            padding: 1.5rem 1rem;
+            min-height: 140px;
+        }
+        .taskflow-crud-loading .taskflow-splash__status {
+            font-size: 0.6875rem;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            color: var(--text-muted);
         }
         @media (prefers-reduced-motion: reduce) {
             .app-main-loading {
-                backdrop-filter: none;
-                -webkit-backdrop-filter: none;
                 transition: opacity 0.12s ease;
             }
-            .taskflow-loader-rings::before,
-            .taskflow-loader-rings::after {
+            .taskflow-kanban-loading { animation: none; }
+            .taskflow-kanban-board {
                 animation: none;
-                border-color: color-mix(in srgb, var(--primary) 35%, transparent);
-                border-top-color: var(--primary);
             }
-            .taskflow-loader-label { animation: none; opacity: 0.85; }
+            .taskflow-kanban-board__head span {
+                animation: none;
+                opacity: 0.85;
+            }
+            .taskflow-minimal-caption::before {
+                animation: none;
+                opacity: 0.9;
+                transform: none;
+            }
+            .taskflow-minimal-bars span {
+                animation: none;
+                opacity: 0.75;
+                transform: scaleY(0.85);
+            }
+            .taskflow-splash__dots span { animation: none; opacity: 0.65; }
         }
         .pagination { gap: 0.25rem; }
         .pagination .page-link {
@@ -1846,11 +2114,11 @@
         .issues-toolbar-filters .form-select:not([multiple]):not([size]) {
             border-radius: var(--radius-lg);
             border: 1px solid var(--border-color);
-            background: var(--input-bg);
+            background-color: var(--input-bg);
             box-shadow: var(--shadow-sm);
             font-weight: 600;
             color: var(--text-body);
-            transition: border-color .2s ease, background .2s ease, box-shadow .2s ease;
+            transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
         }
         .setup-filter-form .form-select:not([multiple]):not([size]):focus,
         .issues-toolbar-filters .form-select:not([multiple]):not([size]):focus {
@@ -2341,7 +2609,7 @@
                 <div class="avatar">{{ strtoupper(substr(auth()->user()->name ?? 'U', 0, 1)) }}</div>
                 <div class="d-none d-sm-block">
                     <span class="user-name d-block">{{ auth()->user()->name ?? 'User' }}</span>
-                    <small class="text-muted" style="font-size: .75rem;">Admin</small>
+                    <small class="text-muted" style="font-size: .75rem;">{{ optional(auth()->user()->roles->first())->name ?? 'Member' }}</small>
                 </div>
                 <div class="dropdown">
                     <button class="btn btn-link text-body p-0 border-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -2365,7 +2633,7 @@
                             </button>
                         </li>
                         <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#"><i class="bi bi-person me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="{{ route('profile') }}"><i class="bi bi-person me-2"></i>Profile</a></li>
                         <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i>Settings</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
@@ -2432,10 +2700,19 @@
     @endauth
 
     <main class="app-main position-relative" id="app-main">
-        <div class="app-main-loading position-absolute top-0 start-0 end-0 bottom-0 d-flex align-items-center justify-content-center d-none" id="app-main-loading" style="z-index: 15; border-radius: var(--radius-lg);" aria-hidden="true">
-            <div class="taskflow-module-loader text-center px-4" id="app-main-loading-inner" role="status" aria-live="polite" aria-busy="false">
-                <div class="taskflow-loader-rings mx-auto" aria-hidden="true"></div>
-                <span class="taskflow-loader-label">Loading module</span>
+        <div class="app-main-loading position-absolute top-0 start-0 end-0 bottom-0 d-none d-flex align-items-stretch justify-content-stretch" id="app-main-loading" style="z-index: 15; border-radius: var(--radius-lg);" aria-hidden="true">
+            <div class="taskflow-module-loader taskflow-splash taskflow-splash--kanban flex-fill" id="app-main-loading-inner" role="status" aria-live="polite" aria-busy="false">
+                <div class="taskflow-kanban-loading">
+                    <div class="taskflow-kanban-board" aria-hidden="true">
+                        <div class="taskflow-kanban-board__head">
+                            <span>To do</span><span>Doing</span><span>Done</span>
+                        </div>
+                        <div class="taskflow-kanban-board__canvas">
+                            <img class="taskflow-kanban-gif" src="{{ asset('images/kanban-loading.gif') }}" width="300" height="300" alt="" decoding="async" data-kanban-src="{{ asset('images/kanban-loading.gif') }}">
+                        </div>
+                    </div>
+                    <p class="taskflow-minimal-caption"><kbd>TaskFlow</kbd> — Loading</p>
+                </div>
                 <span class="visually-hidden">Loading content, please wait.</span>
             </div>
         </div>
@@ -2453,7 +2730,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body scrollable" id="crudModalBody">
-                    <div class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading...</div>
+                    <div class="taskflow-crud-loading py-4" role="status" aria-live="polite">
+                        <div class="taskflow-minimal-bars taskflow-minimal-bars--sm" aria-hidden="true"><span></span><span></span><span></span></div>
+                        <span class="taskflow-splash__status text-center d-block w-100">Loading form</span>
+                    </div>
                 </div>
                 <div class="modal-footer d-none" id="crudModalFooter">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -2519,7 +2799,7 @@
                 if (!modalEl || !bodyEl) return;
                 const { title, loadUrl, submitUrl, method = 'POST', refreshUrl, onSuccess, viewOnly } = options;
                 if (labelEl) labelEl.textContent = title || '—';
-                if (bodyEl) bodyEl.innerHTML = '<div class="text-center py-4 text-muted"><span class="spinner-border spinner-border-sm me-2"></span>Loading...</div>';
+                if (bodyEl) bodyEl.innerHTML = '<div class="taskflow-crud-loading" role="status" aria-live="polite"><div class="taskflow-minimal-bars taskflow-minimal-bars--sm" aria-hidden="true"><span></span><span></span><span></span></div><span class="taskflow-splash__status text-center d-block w-100">Loading form</span></div>';
                 if (viewOnly) {
                     if (footerEl) footerEl.classList.add('d-none');
                     var dialog = modalEl ? modalEl.querySelector('.modal-dialog') : null;
@@ -3046,6 +3326,11 @@
                 loadingEl.classList.remove('d-none');
                 loadingEl.setAttribute('aria-hidden', 'false');
                 if (loadingInner) loadingInner.setAttribute('aria-busy', 'true');
+                var gifEl = loadingInner ? loadingInner.querySelector('.taskflow-kanban-gif') : null;
+                if (gifEl) {
+                    var base = gifEl.getAttribute('data-kanban-src') || gifEl.src.replace(/\?.*$/, '');
+                    gifEl.src = base + (base.indexOf('?') >= 0 ? '&' : '?') + 'g=' + gen;
+                }
                 requestAnimationFrame(function() {
                     requestAnimationFrame(function() {
                         if (loadingEl.classList) loadingEl.classList.add('is-visible');
