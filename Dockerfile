@@ -52,4 +52,4 @@ ENV APP_PORT=10000
 
 EXPOSE 10000
 
-CMD sh -c "php artisan config:cache && php artisan route:cache && php -S 0.0.0.0:${PORT:-${APP_PORT}} -t public"
+CMD sh -c "php -S 0.0.0.0:${PORT:-${APP_PORT}} -t public"

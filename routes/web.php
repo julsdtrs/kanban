@@ -29,6 +29,10 @@ use App\Http\Controllers\WorkflowDiagramController;
 use App\Http\Controllers\WorkflowTransitionController;
 use Illuminate\Support\Facades\Route;
 
+Route::get('/up', function () {
+    return response()->json(['status' => 'ok'], 200);
+});
+
 Route::get('/', function () {
     return auth()->check() ? redirect()->route('dashboard') : view('welcome');
 });
