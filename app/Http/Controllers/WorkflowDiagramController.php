@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Project;
+use App\Models\Board;
 use App\Models\Status;
 use App\Models\Workflow;
 use App\Models\WorkflowTransition;
@@ -10,23 +10,45 @@ use Illuminate\Http\Request;
 
 class WorkflowDiagramController extends Controller
 {
+    private function boardsWithWorkflow()
+    {
+        return Board::with([
+            'project:id,name,project_key',
+            'workflows' => fn ($q) => $q->with('project:id,name')->orderBy('name'),
+        ])
+            ->whereHas('workflows')
+            ->orderBy('name')
+            ->get(['id', 'name', 'project_id', 'board_type']);
+    }
+
     public function index()
     {
-        $workflows = Workflow::with('project:id,name')->orderBy('name')->get(['id', 'name', 'project_id']);
-        if ($workflows->isEmpty()) {
-            return view('workflow-diagram.index', compact('workflows'));
+        $boards = $this->boardsWithWorkflow();
+        if ($boards->isEmpty()) {
+            return view('workflow-diagram.index', compact('boards'));
         }
+        $firstWorkflow = optional($boards->first()->workflows)->first();
+        if (! $firstWorkflow) {
+            return view('workflow-diagram.index', compact('boards'));
+        }
+
         // Always show diagram for first workflow: full page load redirects here; AJAX gets show view
         if (request()->ajax() || request()->header('X-Requested-With') === 'XMLHttpRequest') {
-            return $this->show($workflows->first());
+            return $this->show($firstWorkflow);
         }
-        return redirect()->route('workflows.diagram.show', $workflows->first());
+        return redirect()->route('workflows.diagram.show', $firstWorkflow);
     }
 
     public function show(Workflow $workflow)
     {
-        $workflows = Workflow::with('project:id,name')->orderBy('name')->get(['id', 'name', 'project_id']);
+        $boards = $this->boardsWithWorkflow();
         $workflow->load(['project', 'transitions' => fn ($q) => $q->orderBy('order'), 'transitions.fromStatus', 'transitions.toStatus']);
+        $selectedBoard = $workflow->board;
+        if (! $selectedBoard && $boards->isNotEmpty()) {
+            $selectedBoard = $boards->first(function (Board $board) use ($workflow) {
+                return $board->workflows->contains('id', $workflow->id);
+            }) ?: $boards->first();
+        }
         $statuses = Status::orderBy('order_no')->get();
         // Unique statuses that appear in any transition (for connected graph)
         $statusIdsInWorkflow = $workflow->transitions->pluck('from_status_id')->merge($workflow->transitions->pluck('to_status_id'))->unique()->values();
@@ -46,7 +68,7 @@ class WorkflowDiagramController extends Controller
         if (request()->boolean('partial')) {
             return view('workflow-diagram._diagram_content', compact('workflow', 'statuses', 'statusesInWorkflow', 'transitionsByFrom', 'transitionsForDiagram', 'statusesForDiagram'));
         }
-        return view('workflow-diagram.show', compact('workflow', 'workflows', 'statuses', 'statusesInWorkflow', 'transitionsByFrom', 'transitionsForDiagram', 'statusesForDiagram'));
+        return view('workflow-diagram.show', compact('workflow', 'boards', 'selectedBoard', 'statuses', 'statusesInWorkflow', 'transitionsByFrom', 'transitionsForDiagram', 'statusesForDiagram'));
     }
 
     public function storeTransition(Request $request)

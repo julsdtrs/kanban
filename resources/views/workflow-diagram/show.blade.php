@@ -4,21 +4,24 @@
 <div class="workflow-page workflow-page-fill">
     <div class="d-flex align-items-center mb-3 flex-shrink-0 flex-wrap gap-2">
         <h1 class="h3 mb-0 me-3">Workflow Diagram</h1>
-        @if(isset($workflows) && $workflows->isNotEmpty())
+        @if(isset($boards) && $boards->isNotEmpty())
         <div class="dropdown">
             <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-2" type="button" id="workflowDiagramDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                <i class="bi bi-arrow-left-right"></i>
-                <span id="workflow-diagram-label">{{ $workflow->name }}</span>
-                <span class="badge bg-primary rounded-pill" id="workflow-diagram-project">{{ $workflow->project->name ?? '' }}</span>
+                <i class="bi bi-grid-3x3-gap"></i>
+                <span id="workflow-diagram-label">{{ $selectedBoard->name ?? $workflow->name }}</span>
+                <span class="badge bg-primary rounded-pill" id="workflow-diagram-project">{{ $workflow->name }}</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end kanban-board-dropdown-menu" aria-labelledby="workflowDiagramDropdown">
-                @foreach($workflows as $wf)
+                @foreach($boards as $board)
+                @php $boardWorkflow = $board->workflows->first(); @endphp
+                @if($boardWorkflow)
                 <li>
-                    <a class="workflow-diagram-select dropdown-item d-flex justify-content-between align-items-center {{ $wf->id === $workflow->id ? 'active' : '' }}" href="{{ route('workflows.diagram.show', $wf) }}" data-workflow-id="{{ $wf->id }}" data-workflow-name="{{ e($wf->name) }}" data-project-name="{{ e($wf->project->name ?? '') }}">
-                        <span>{{ $wf->name }}</span>
-                        <span class="badge bg-secondary rounded-pill">{{ $wf->project->name ?? '' }}</span>
+                    <a class="workflow-diagram-select dropdown-item d-flex justify-content-between align-items-center {{ $boardWorkflow->id === $workflow->id ? 'active' : '' }}" href="{{ route('workflows.diagram.show', $boardWorkflow) }}" data-workflow-id="{{ $boardWorkflow->id }}" data-workflow-name="{{ e($board->name ?? ('Board #'.$board->id)) }}" data-project-name="{{ e($boardWorkflow->name ?? '') }}">
+                        <span><i class="bi bi-kanban me-2"></i>{{ $board->name ?? ('Board #'.$board->id) }}</span>
+                        <span class="badge bg-secondary rounded-pill">{{ $boardWorkflow->name ?? '' }}</span>
                     </a>
                 </li>
+                @endif
                 @endforeach
             </ul>
         </div>
