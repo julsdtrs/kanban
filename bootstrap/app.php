@@ -11,7 +11,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        // Render (and similar) terminate TLS in front of PHP; trust forwarded proto/host
+        // so sessions use secure cookies and URLs stay HTTPS — fixes 419 after login.
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //
