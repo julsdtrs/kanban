@@ -4,7 +4,7 @@ services:
     runtime: docker
     plan: free
     autoDeploy: true
-    healthCheckPath: /up
+    healthCheckPath: /healthz.txt
     envVars:
       - key: APP_ENV
         value: production
