@@ -16,6 +16,12 @@ services:
         sync: false
       - key: LOG_CHANNEL
         value: stderr
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
       - key: DB_CONNECTION
         value: pgsql
       - key: DB_HOST

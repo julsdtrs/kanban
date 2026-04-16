@@ -55,4 +55,4 @@ ENV APP_PORT=10000
 
 EXPOSE 10000
 
-CMD sh -c "php -S 0.0.0.0:${PORT:-${APP_PORT}} -t public"
+CMD sh -c "mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache && chmod -R 777 storage bootstrap/cache && php artisan migrate --force || true; php -S 0.0.0.0:${PORT:-${APP_PORT}} -t public"
