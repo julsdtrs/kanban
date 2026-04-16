@@ -2204,6 +2204,36 @@
         .setup-table-footer .pagination { margin-bottom: 0; }
         .setup-list-card .table td .btn,
         .setup-list-card .table td .btn-sm { min-width: 58px; }
+        /* Boards: projects as badges instead of a comma-separated wall of text */
+        .setup-list-card .board-projects-col { min-width: 10rem; width: 28%; }
+        .setup-list-card .board-projects-cell {
+            max-width: 28rem;
+            vertical-align: middle;
+        }
+        .board-project-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 0.2rem 0.5rem;
+            border-radius: var(--radius-lg);
+            border: 1px solid color-mix(in srgb, var(--primary) 28%, var(--border-color));
+            background: color-mix(in srgb, var(--primary) 9%, var(--input-bg));
+            color: var(--primary);
+            line-height: 1.3;
+            transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+        }
+        .board-project-badge:hover {
+            background: color-mix(in srgb, var(--primary) 16%, var(--input-bg));
+            color: var(--primary-hover);
+            border-color: color-mix(in srgb, var(--primary) 42%, var(--border-color));
+        }
+        .board-projects-more {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            white-space: nowrap;
+            cursor: default;
+        }
         @keyframes tableFadeIn {
             from { opacity: 0; transform: translateY(5px); }
             to { opacity: 1; transform: translateY(0); }
