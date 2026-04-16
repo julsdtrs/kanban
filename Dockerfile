@@ -41,6 +41,9 @@ COPY . .
 COPY --from=frontend /app/public/build ./public/build
 
 RUN php artisan package:discover --ansi
+RUN php artisan config:clear || true
+RUN php artisan cache:clear || true
+RUN php artisan migrate --force || true
 
 RUN mkdir -p storage/framework/{cache,sessions,views} bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
