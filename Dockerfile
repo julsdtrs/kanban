@@ -4,6 +4,7 @@ WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install \
     --no-dev \
+    --no-scripts \
     --no-interaction \
     --no-progress \
     --prefer-dist \
@@ -38,6 +39,8 @@ RUN apk add --no-cache \
 COPY --from=vendor /app/vendor ./vendor
 COPY . .
 COPY --from=frontend /app/public/build ./public/build
+
+RUN php artisan package:discover --ansi
 
 RUN mkdir -p storage/framework/{cache,sessions,views} bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
